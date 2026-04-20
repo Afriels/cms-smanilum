@@ -1,65 +1,104 @@
-import Image from "next/image";
+import { AnnouncementCard } from "@/components/cards/announcement-card";
+import { GalleryCard } from "@/components/cards/gallery-card";
+import { PostCard } from "@/components/cards/post-card";
+import Link from "next/link";
+import { CtaSection } from "@/components/sections/cta-section";
+import { HeroBanner } from "@/components/sections/hero-banner";
+import { HomeCarousel } from "@/components/sections/home-carousel";
+import { SectionHeading } from "@/components/sections/section-heading";
+import { TrendingSidebar } from "@/components/sections/trending-sidebar";
+import { Button } from "@/components/ui/button";
+import { getHomePageData } from "@/services/content-service";
 
-export default function Home() {
+export default async function HomePage() {
+  const data = await getHomePageData();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <>
+      <HeroBanner banner={data.banner} />
+      <HomeCarousel items={data.carousel} />
+
+      <section className="container-shell py-8">
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
+          <div>
+            <SectionHeading
+              eyebrow="Featured News"
+              title="Sorotan utama dan berita unggulan sekolah"
+              description="Konten penting tampil menonjol di beranda untuk menjaga arus informasi tetap jelas dan profesional."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="grid gap-6 md:grid-cols-2">
+              {data.featuredPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          </div>
+          <TrendingSidebar posts={data.trendingPosts} />
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="container-shell py-8">
+        <SectionHeading
+          eyebrow="Latest Update"
+          title="Berita terbaru"
+          description="Update kegiatan, akademik, kesiswaan, dan prestasi sekolah dalam tampilan cepat baca."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {data.latestPosts.map((post) => (
+            <PostCard key={post.id} post={post} compact />
+          ))}
+        </div>
+        <div className="mt-8">
+          <Button href="/berita">Lihat semua berita</Button>
+        </div>
+      </section>
+
+      <section className="container-shell py-8">
+        <SectionHeading
+          eyebrow="Kategori"
+          title="Kategori berita"
+          description="Navigasi cepat berdasarkan topik konten utama."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.categories.map((category) => (
+            <Link
+              key={category.id}
+              href={`/kategori/${category.slug}`}
+              className="surface-card p-6"
+            >
+              <h3 className="text-lg font-semibold text-slate-900">{category.name}</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">{category.description}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-shell py-8">
+        <SectionHeading
+          eyebrow="Pengumuman"
+          title="Informasi penting sekolah"
+          description="Panel pengumuman dinamis yang dapat dikelola admin dari dashboard."
+        />
+        <div className="grid gap-4 lg:grid-cols-2">
+          {data.announcements.map((item) => (
+            <AnnouncementCard key={item.id} item={item} />
+          ))}
+        </div>
+      </section>
+
+      <section className="container-shell py-8">
+        <SectionHeading
+          eyebrow="Galeri"
+          title="Dokumentasi kegiatan"
+          description="Album foto sekolah dengan detail album dan grid foto responsif."
+        />
+        <div className="grid gap-6 md:grid-cols-2">
+          {data.galleries.map((gallery) => (
+            <GalleryCard key={gallery.id} gallery={gallery} />
+          ))}
+        </div>
+      </section>
+
+      <CtaSection />
+    </>
   );
 }
