@@ -28,7 +28,7 @@ export default async function ProfilePage({
   if (!page) notFound();
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell py-8 sm:py-10">
       <Breadcrumbs
         items={[
           { label: "Beranda", href: "/" },
@@ -36,10 +36,10 @@ export default async function ProfilePage({
           { label: page.title },
         ]}
       />
-      <article className="surface-card p-8 sm:p-10">
-        <h1 className="text-4xl font-semibold tracking-tight text-slate-950">{page.title}</h1>
+      <article className="surface-card p-5 sm:p-8 lg:p-10">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">{page.title}</h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">{page.excerpt}</p>
-        <div className="prose prose-slate mt-8 max-w-none whitespace-pre-line text-slate-700">
+        <div className="article-content mt-8 whitespace-pre-line">
           {page.content}
         </div>
       </article>

@@ -66,8 +66,8 @@ export function ResourceManager({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_1.2fr]">
-      <form action={onSubmit} className="surface-card space-y-4 p-6">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <form action={onSubmit} className="surface-card space-y-4 p-5 sm:p-6">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Tambah {title}</h2>
           <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -90,7 +90,10 @@ export function ResourceManager({
 
           if (field.type === "checkbox") {
             return (
-              <label key={field.name} className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700">
+              <label
+                key={field.name}
+                className="flex min-h-11 items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700"
+              >
                 <input type="checkbox" name={field.name} value="true" className="h-4 w-4" />
                 {field.label}
               </label>
@@ -127,7 +130,7 @@ export function ResourceManager({
         </Button>
       </form>
 
-      <div className="surface-card p-6">
+      <div className="surface-card min-w-0 p-5 sm:p-6">
         <div className="mb-5">
           <h2 className="text-xl font-semibold text-slate-900">Data {title}</h2>
           <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -140,19 +143,19 @@ export function ResourceManager({
               key={String(item.id)}
               className="rounded-3xl border border-slate-100 bg-slate-50/70 p-5"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <h3 className="font-semibold text-slate-900">
                     {String(item.title || item.name || item.key || item.slug || "Untitled")}
                   </h3>
-                  <p className="mt-2 text-sm leading-7 text-slate-600">
+                  <p className="mt-2 break-words text-sm leading-7 text-slate-600">
                     {String(item.excerpt || item.description || item.value || item.content || "")}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => onDelete(String(item.id))}
-                  className="rounded-full bg-white p-3 text-slate-500 hover:text-red-600"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center self-end rounded-full bg-white text-slate-500 hover:text-red-600 sm:self-auto"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

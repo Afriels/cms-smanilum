@@ -18,7 +18,7 @@ export default async function HomePage() {
       <HeroBanner banner={data.banner} />
       <HomeCarousel items={data.carousel} />
 
-      <section className="container-shell py-8">
+      <section className="container-shell py-6 sm:py-8">
         <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
           <div>
             <SectionHeading
@@ -26,7 +26,7 @@ export default async function HomePage() {
               title="Sorotan utama dan berita unggulan sekolah"
               description="Konten penting tampil menonjol di beranda untuk menjaga arus informasi tetap jelas dan profesional."
             />
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               {data.featuredPosts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -36,13 +36,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container-shell py-8">
+      <section className="container-shell py-6 sm:py-8">
         <SectionHeading
           eyebrow="Latest Update"
           title="Berita terbaru"
           description="Update kegiatan, akademik, kesiswaan, dan prestasi sekolah dalam tampilan cepat baca."
         />
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.latestPosts.map((post) => (
             <PostCard key={post.id} post={post} compact />
           ))}
@@ -52,7 +52,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container-shell py-8">
+      <section className="container-shell py-6 sm:py-8">
         <SectionHeading
           eyebrow="Kategori"
           title="Kategori berita"
@@ -72,7 +72,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container-shell py-8">
+      <section className="container-shell py-6 sm:py-8">
         <SectionHeading
           eyebrow="Pengumuman"
           title="Informasi penting sekolah"
@@ -85,13 +85,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container-shell py-8">
+      <section className="container-shell py-6 sm:py-8">
         <SectionHeading
           eyebrow="Galeri"
           title="Dokumentasi kegiatan"
           description="Album foto sekolah dengan detail album dan grid foto responsif."
         />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {data.galleries.map((gallery) => (
             <GalleryCard key={gallery.id} gallery={gallery} />
           ))}

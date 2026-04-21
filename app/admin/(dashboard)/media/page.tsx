@@ -26,7 +26,7 @@ export default function AdminMediaPage() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <form action={handleUpload} className="surface-card space-y-4 p-6">
+      <form action={handleUpload} className="surface-card space-y-4 p-5 sm:p-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">Bucket</label>
           <Select name="bucket" defaultValue="posts">
@@ -51,12 +51,16 @@ export default function AdminMediaPage() {
         </Button>
       </form>
 
-      <div className="surface-card p-6">
+      <div className="surface-card p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-slate-900">Preview</h2>
-        <div className="mt-4 flex min-h-80 items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50">
+        <div className="mt-4 flex min-h-64 items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:min-h-80">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="Preview upload" className="max-h-72 rounded-2xl object-cover" />
+            <img
+              src={preview}
+              alt="Preview upload"
+              className="max-h-72 w-full max-w-xl rounded-2xl object-cover"
+            />
           ) : (
             <p className="max-w-sm text-center text-sm leading-7 text-slate-500">
               Preview gambar akan muncul di sini sebelum atau sesudah upload.

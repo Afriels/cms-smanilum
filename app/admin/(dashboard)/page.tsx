@@ -16,14 +16,14 @@ export default async function AdminPage() {
     <div className="grid gap-6">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stats.map(([label, value]) => (
-          <div key={label} className="surface-card p-6">
+          <div key={label} className="surface-card p-5 sm:p-6">
             <p className="text-sm text-slate-500">{label}</p>
-            <p className="mt-3 text-4xl font-semibold text-slate-950">{value}</p>
+            <p className="mt-3 text-3xl font-semibold text-slate-950 sm:text-4xl">{value}</p>
           </div>
         ))}
       </div>
 
-      <div className="surface-card p-6">
+      <div className="surface-card p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-slate-900">Ringkasan sistem</h2>
         <div className="mt-4 grid gap-4 lg:grid-cols-3">
           <div className="rounded-3xl bg-slate-50 p-5">

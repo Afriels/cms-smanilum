@@ -32,7 +32,7 @@ export default async function CategoryPage({
   const result = await getPosts({ categorySlug: slug });
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell py-8 sm:py-10">
       <Breadcrumbs
         items={[
           { label: "Beranda", href: "/" },
@@ -40,13 +40,13 @@ export default async function CategoryPage({
           { label: category.name },
         ]}
       />
-      <h1 className="text-4xl font-semibold tracking-tight text-slate-950">
+      <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
         {category.name}
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
         {category.description}
       </p>
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {result.data.map((post) => (
           <PostCard key={post.id} post={post} compact />
         ))}

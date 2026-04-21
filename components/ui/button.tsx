@@ -25,13 +25,18 @@ const variants = {
 };
 
 const baseClass =
-  "inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold";
+  "inline-flex min-h-11 items-center justify-center rounded-full px-5 py-3 text-sm font-semibold whitespace-nowrap";
 
 export function Button(props: ButtonProps) {
   const className = cn(baseClass, variants[props.variant || "primary"], props.className);
 
   if ("href" in props && props.href) {
-    const { href, children, variant, className: _, ...rest } = props as ButtonAsLink;
+    const { href, children } = props as ButtonAsLink;
+    const rest: Partial<ButtonAsLink> = { ...(props as ButtonAsLink) };
+    delete rest.href;
+    delete rest.children;
+    delete rest.variant;
+    delete rest.className;
     return (
       <Link href={href} className={className} {...rest}>
         {children}
@@ -39,7 +44,11 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  const { children, variant, className: _, ...rest } = props as ButtonAsButton;
+  const { children } = props as ButtonAsButton;
+  const rest: Partial<ButtonAsButton> = { ...(props as ButtonAsButton) };
+  delete rest.children;
+  delete rest.variant;
+  delete rest.className;
   return (
     <button className={className} {...rest}>
       {children}

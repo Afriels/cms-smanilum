@@ -38,10 +38,10 @@ export function AdminLoginForm() {
   return (
     <form
       action={handleSubmit}
-      className="surface-card mx-auto max-w-md space-y-5 p-8"
+      className="surface-card mx-auto max-w-md space-y-5 p-6 sm:p-8"
     >
       <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-950">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
           Login Admin
         </h1>
         <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -54,7 +54,7 @@ export function AdminLoginForm() {
       </div>
       <div className="space-y-2">
         <label className="text-sm font-medium text-slate-700">Password</label>
-        <Input name="password" type="password" placeholder="••••••••" required />
+        <Input name="password" type="password" placeholder="********" required />
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <Button type="submit" className="w-full" disabled={loading}>

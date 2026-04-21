@@ -21,26 +21,28 @@ export default async function BeritaPage({
   const result = await getPosts({ page });
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell py-8 sm:py-10">
       <Breadcrumbs items={[{ label: "Beranda", href: "/" }, { label: "Berita" }]} />
       <SectionHeading
         eyebrow="Newsroom"
         title="Berita sekolah"
         description="Halaman listing berita dengan pagination dan card-based layout."
       />
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {result.data.map((post) => (
           <PostCard key={post.id} post={post} compact />
         ))}
       </div>
-      <div className="mt-8 flex flex-wrap gap-3">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {page > 1 ? (
-          <Button href={`/berita?page=${page - 1}`} variant="secondary">
+          <Button href={`/berita?page=${page - 1}`} variant="secondary" className="w-full sm:w-auto">
             Halaman sebelumnya
           </Button>
         ) : null}
         {page < result.totalPages ? (
-          <Button href={`/berita?page=${page + 1}`}>Halaman berikutnya</Button>
+          <Button href={`/berita?page=${page + 1}`} className="w-full sm:w-auto">
+            Halaman berikutnya
+          </Button>
         ) : null}
       </div>
     </div>

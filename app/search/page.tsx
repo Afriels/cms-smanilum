@@ -1,5 +1,7 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
 import { PostCard } from "@/components/cards/post-card";
 import { searchContent } from "@/services/content-service";
 
@@ -13,18 +15,18 @@ export default async function SearchPage({
   const result = query ? await searchContent(query) : { posts: [], categories: [] };
 
   return (
-    <div className="container-shell py-10">
+    <div className="container-shell py-8 sm:py-10">
       <Breadcrumbs items={[{ label: "Beranda", href: "/" }, { label: "Pencarian" }]} />
-      <form className="surface-card flex flex-col gap-4 p-6 sm:flex-row">
-        <input
+      <form className="surface-card flex flex-col gap-4 p-5 sm:flex-row sm:p-6">
+        <Input
           defaultValue={query}
           name="q"
           placeholder="Cari berita, kategori, atau topik..."
-          className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
+          className="flex-1"
         />
-        <button className="rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white">
+        <Button type="submit" className="w-full sm:w-auto">
           Cari
-        </button>
+        </Button>
       </form>
 
       <div className="mt-8">
@@ -39,7 +41,7 @@ export default async function SearchPage({
             description={`Belum ada hasil untuk "${query}". Coba kata kunci lain.`}
           />
         ) : (
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {result.posts.map((post) => (
               <PostCard key={post.id} post={post} compact />
             ))}
