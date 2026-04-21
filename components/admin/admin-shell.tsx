@@ -19,16 +19,16 @@ import {
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/posts", label: "Posts", icon: Newspaper },
-  { href: "/admin/categories", label: "Categories", icon: Tags },
-  { href: "/admin/banners", label: "Banners", icon: PanelsTopLeft },
-  { href: "/admin/carousel", label: "Carousel", icon: PanelsTopLeft },
-  { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
-  { href: "/admin/media", label: "Media Library", icon: UploadCloud },
-  { href: "/admin/pages", label: "Pages", icon: FolderKanban },
-  { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/settings", label: "Site Settings", icon: Settings },
+  { href: "/adminku", label: "Overview", icon: LayoutDashboard },
+  { href: "/adminku/posts", label: "Posts", icon: Newspaper },
+  { href: "/adminku/categories", label: "Categories", icon: Tags },
+  { href: "/adminku/banners", label: "Banners", icon: PanelsTopLeft },
+  { href: "/adminku/carousel", label: "Carousel", icon: PanelsTopLeft },
+  { href: "/adminku/gallery", label: "Gallery", icon: ImageIcon },
+  { href: "/adminku/media", label: "Media Library", icon: UploadCloud },
+  { href: "/adminku/pages", label: "Pages", icon: FolderKanban },
+  { href: "/adminku/announcements", label: "Announcements", icon: Megaphone },
+  { href: "/adminku/settings", label: "Site Settings", icon: Settings },
 ];
 
 export function AdminShell({

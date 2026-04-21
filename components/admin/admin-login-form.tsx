@@ -31,7 +31,7 @@ export function AdminLoginForm() {
       return;
     }
 
-    router.push("/admin");
+    router.push("/adminku");
     router.refresh();
   }
 
