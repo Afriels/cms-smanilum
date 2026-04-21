@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export async function getAdminSession() {
   const supabase = await createSupabaseServerClient();
+  const supabaseAdmin = createSupabaseAdminClient();
   if (!supabase) {
     return {
       user: { id: "demo-admin", email: "demo@local.dev" },
@@ -16,7 +17,8 @@ export async function getAdminSession() {
 
   if (!user) return null;
 
-  const { data: profile } = await supabase
+  const profileClient = supabaseAdmin ?? supabase;
+  const { data: profile } = await profileClient
     .from("users")
     .select("id, email, full_name, role")
     .eq("auth_user_id", user.id)

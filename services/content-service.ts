@@ -1,5 +1,5 @@
 import { mockData } from "@/lib/mock-data";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabaseServer";
 import { generateSlug } from "@/lib/utils";
 import type {
   Announcement,
@@ -7,9 +7,13 @@ import type {
   CarouselItem,
   Category,
   Gallery,
+  GalleryItem,
   HomePageData,
+  PageContent,
   PaginatedResult,
   Post,
+  SearchResult,
+  SiteSetting,
 } from "@/types";
 
 function sortByPublishedDesc<T extends { published_at?: string | null }>(items: T[]) {
@@ -192,6 +196,43 @@ export async function getPostBySlug(slug: string) {
 }
 
 export async function getRelatedPosts(post: Post, limit = 3) {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      let builder = supabase
+        .from("posts")
+        .select("*, category:categories(*)")
+        .neq("slug", post.slug)
+        .eq("is_published", true)
+        .order("published_at", { ascending: false })
+        .limit(limit);
+
+      if (post.category_id) {
+        builder = builder.eq("category_id", post.category_id);
+      }
+
+      const { data } = await builder;
+      if (data && data.length > 0) {
+        return data as Post[];
+      }
+
+      const { data: fallbackData } = await supabase
+        .from("posts")
+        .select("*, category:categories(*)")
+        .neq("slug", post.slug)
+        .eq("is_published", true)
+        .order("published_at", { ascending: false })
+        .limit(limit);
+
+      if (fallbackData) {
+        return fallbackData as Post[];
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   const items = mockData.posts
     .filter((candidate) => candidate.slug !== post.slug && candidate.category_id === post.category_id)
     .slice(0, limit);
@@ -202,33 +243,167 @@ export async function getRelatedPosts(post: Post, limit = 3) {
 }
 
 export async function getCategories() {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (data) return data as Category[];
+    } catch {
+      // ignore
+    }
+  }
+
   return mockData.categories;
 }
 
 export async function getCategoryBySlug(slug: string) {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (data) return data as Category;
+    } catch {
+      // ignore
+    }
+  }
+
   return mockData.categories.find((category) => category.slug === slug) || null;
 }
 
 export async function getGalleries() {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from("galleries")
+        .select("*")
+        .order("published_at", { ascending: false });
+
+      if (data) return data as Gallery[];
+    } catch {
+      // ignore
+    }
+  }
+
   return mockData.galleries;
 }
 
 export async function getGalleryBySlug(slug: string) {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data: gallery } = await supabase
+        .from("galleries")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (gallery) {
+        const { data: items } = await supabase
+          .from("gallery_items")
+          .select("*")
+          .eq("gallery_id", gallery.id)
+          .order("created_at", { ascending: false });
+
+        return {
+          gallery: gallery as Gallery,
+          items: (items as GalleryItem[]) || [],
+        };
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   const gallery = mockData.galleries.find((item) => item.slug === slug) || null;
   const items = mockData.galleryItems.filter((item) => item.gallery_id === gallery?.id);
   return { gallery, items };
 }
 
 export async function getPages() {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from("pages")
+        .select("*")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+      if (data) return data as PageContent[];
+    } catch {
+      // ignore
+    }
+  }
+
   return mockData.pages.filter((page) => page.is_published);
 }
 
 export async function getPageBySlug(slug: string) {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from("pages")
+        .select("*")
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .maybeSingle();
+
+      if (data) return data as PageContent;
+    } catch {
+      // ignore
+    }
+  }
+
   return mockData.pages.find((page) => page.slug === slug && page.is_published) || null;
 }
 
-export async function searchContent(query: string) {
+export async function searchContent(query: string): Promise<SearchResult> {
   const keyword = query.toLowerCase();
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase && query.trim()) {
+    try {
+      const [postsRes, categoriesRes] = await Promise.all([
+        supabase
+          .from("posts")
+          .select("*, category:categories(*)")
+          .eq("is_published", true)
+          .or(`title.ilike.%${query}%,excerpt.ilike.%${query}%,content.ilike.%${query}%`)
+          .order("published_at", { ascending: false })
+          .limit(12),
+        supabase
+          .from("categories")
+          .select("*")
+          .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
+          .order("name", { ascending: true })
+          .limit(8),
+      ]);
+
+      return {
+        posts: (postsRes.data as Post[]) || [],
+        categories: (categoriesRes.data as Category[]) || [],
+      };
+    } catch {
+      // ignore
+    }
+  }
 
   return {
     posts: mockData.posts.filter(
@@ -243,6 +418,37 @@ export async function searchContent(query: string) {
 }
 
 export async function getAdminCollections() {
+  const supabase = createSupabaseAdminClient();
+
+  if (supabase) {
+    try {
+      const [postsRes, categoriesRes, bannersRes, carouselRes, galleriesRes, pagesRes, announcementsRes, settingsRes] =
+        await Promise.all([
+          supabase.from("posts").select("*, category:categories(*)").order("created_at", { ascending: false }),
+          supabase.from("categories").select("*").order("name", { ascending: true }),
+          supabase.from("banners").select("*").order("created_at", { ascending: false }),
+          supabase.from("carousel").select("*").order("order_number", { ascending: true }),
+          supabase.from("galleries").select("*").order("published_at", { ascending: false }),
+          supabase.from("pages").select("*").order("created_at", { ascending: false }),
+          supabase.from("announcements").select("*").order("published_at", { ascending: false }),
+          supabase.from("site_settings").select("*").order("key", { ascending: true }),
+        ]);
+
+      return {
+        posts: (postsRes.data as Post[]) || [],
+        categories: (categoriesRes.data as Category[]) || [],
+        banners: (bannersRes.data as Banner[]) || [],
+        carousel: (carouselRes.data as CarouselItem[]) || [],
+        galleries: (galleriesRes.data as Gallery[]) || [],
+        pages: (pagesRes.data as PageContent[]) || [],
+        announcements: (announcementsRes.data as Announcement[]) || [],
+        settings: (settingsRes.data as SiteSetting[]) || [],
+      };
+    } catch {
+      // ignore
+    }
+  }
+
   return {
     posts: mockData.posts,
     categories: mockData.categories,
