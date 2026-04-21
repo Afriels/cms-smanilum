@@ -34,11 +34,8 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="container-shell flex flex-col gap-3 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-shell py-4 text-center text-xs text-slate-500 sm:text-left">
           <p>© 2026 Smanilum News Portal. Semua hak dilindungi.</p>
-          <Link href="/admin/login" className="text-slate-400 hover:text-white">
-            Login CMS
-          </Link>
         </div>
       </div>
     </footer>

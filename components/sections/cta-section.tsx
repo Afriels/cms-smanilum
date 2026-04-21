@@ -10,11 +10,11 @@ export function CtaSection() {
               Siap dipakai
             </p>
             <h2 className="mt-3 text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
-              Satu project penuh untuk portal berita sekolah dan CMS internal
+              Portal berita sekolah yang rapi, cepat, dan nyaman di semua perangkat
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50">
-              Arsitektur fullstack Next.js ini dirancang agar cepat di Vercel, mudah
-              dihubungkan ke Supabase, dan nyaman dipakai admin sekolah.
+              Tampilan publik difokuskan untuk berita, pengumuman, profil, dan galeri
+              sekolah dengan pengalaman baca yang konsisten.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

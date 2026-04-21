@@ -34,7 +34,7 @@ export function HeroBanner({ banner }: { banner: Banner | null }) {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 lg:gap-4">
             {[
               ["Update Cepat", "Berita utama, carousel, dan pengumuman terkelola."],
-              ["CMS Terpadu", "Kelola post, banner, halaman, dan galeri dari /admin."],
+              ["Konten Terpadu", "Berita, banner, halaman, dan galeri tersusun rapi dalam satu portal."],
               ["SEO Siap", "Open Graph, Twitter Card, sitemap, dan metadata dinamis."],
             ].map(([title, description]) => (
               <div key={title} className="rounded-3xl border border-blue-100 bg-white/85 p-4 sm:p-5">

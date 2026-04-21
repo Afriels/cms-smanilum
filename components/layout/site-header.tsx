@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, Search, ShieldCheck, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,6 @@ const navItems = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const showAdminButton = pathname !== "/";
 
   useEffect(() => {
     if (!isOpen) return;
@@ -73,13 +72,6 @@ export function SiteHeader() {
             <Search className="h-4 w-4" />
             <span className="hidden md:inline">Cari berita</span>
           </Button>
-          {showAdminButton ? (
-            <Button href="/admin/login" variant="secondary" className="gap-2">
-              <ShieldCheck className="h-4 w-4" />
-              <span className="hidden xl:inline">Admin</span>
-              <span className="xl:hidden">Login</span>
-            </Button>
-          ) : null}
         </div>
 
         <div className="flex items-center gap-2 sm:hidden">
@@ -109,31 +101,19 @@ export function SiteHeader() {
             {navItems.map((item) => {
               const active = pathname === item.href;
               return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  "flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700",
-                  active && "border-blue-200 bg-blue-50 text-blue-700",
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    "flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700",
+                    active && "border-blue-200 bg-blue-50 text-blue-700",
                   )}
                 >
                   {item.label}
                 </Link>
               );
             })}
-
-            {showAdminButton ? (
-              <Button
-                href="/admin/login"
-                variant="secondary"
-                className="w-full gap-2"
-                onClick={() => setIsOpen(false)}
-              >
-                <ShieldCheck className="h-4 w-4" />
-                Login Admin
-              </Button>
-            ) : null}
           </div>
         </div>
       ) : null}
