@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildPostPayload, getPosts } from "@/services/content-service";
 import { createCollectionHandler, defaultSlugFromBody, deleteCollectionItem, normalizeCheckbox, text } from "@/lib/api-route";
+import { deleteFromSupabaseStorage } from "@/services/upload-service";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -32,5 +33,29 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
-  return deleteCollectionItem("posts", searchParams.get("id"));
+  const id = searchParams.get("id");
+
+  return deleteCollectionItem("posts", id, {
+    beforeDelete: async (supabase) => {
+      if (!id) return;
+      const { data } = await supabase
+        .from("posts")
+        .select("thumbnail_url, og_image_url")
+        .eq("id", id)
+        .maybeSingle();
+
+      await Promise.all([
+        deleteFromSupabaseStorage({
+          bucket: "posts",
+          publicUrl: data?.thumbnail_url,
+        }),
+        data?.og_image_url && data.og_image_url !== data?.thumbnail_url
+          ? deleteFromSupabaseStorage({
+              bucket: "posts",
+              publicUrl: data.og_image_url,
+            })
+          : Promise.resolve(),
+      ]);
+    },
+  });
 }

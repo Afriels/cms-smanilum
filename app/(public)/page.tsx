@@ -8,23 +8,25 @@ import { HomeCarousel } from "@/components/sections/home-carousel";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { TrendingSidebar } from "@/components/sections/trending-sidebar";
 import { Button } from "@/components/ui/button";
+import { getSetting } from "@/lib/settings";
 import { getHomePageData } from "@/services/content-service";
 
 export default async function HomePage() {
   const data = await getHomePageData();
+  const settings = data.siteSettings;
 
   return (
     <>
-      <HeroBanner banner={data.banner} />
-      <HomeCarousel items={data.carousel} />
+      <HeroBanner banner={data.banner} settings={settings} />
+      <HomeCarousel items={data.carousel} settings={settings} />
 
       <section className="container-shell py-6 sm:py-8">
         <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
           <div>
             <SectionHeading
-              eyebrow="Featured News"
-              title="Sorotan utama dan berita unggulan sekolah"
-              description="Konten penting tampil menonjol di beranda untuk menjaga arus informasi tetap jelas dan profesional."
+              eyebrow={getSetting(settings, "featured_eyebrow")}
+              title={getSetting(settings, "featured_title")}
+              description={getSetting(settings, "featured_description")}
             />
             <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               {data.featuredPosts.map((post) => (
@@ -32,15 +34,15 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <TrendingSidebar posts={data.trendingPosts} />
+          <TrendingSidebar posts={data.trendingPosts} settings={settings} />
         </div>
       </section>
 
       <section className="container-shell py-6 sm:py-8">
         <SectionHeading
-          eyebrow="Latest Update"
-          title="Berita terbaru"
-          description="Update kegiatan, akademik, kesiswaan, dan prestasi sekolah dalam tampilan cepat baca."
+          eyebrow={getSetting(settings, "latest_eyebrow")}
+          title={getSetting(settings, "latest_title")}
+          description={getSetting(settings, "latest_description")}
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.latestPosts.map((post) => (
@@ -48,15 +50,17 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="mt-8">
-          <Button href="/berita">Lihat semua berita</Button>
+          <Button href={getSetting(settings, "latest_button_href")}>
+            {getSetting(settings, "latest_button_label")}
+          </Button>
         </div>
       </section>
 
       <section className="container-shell py-6 sm:py-8">
         <SectionHeading
-          eyebrow="Kategori"
-          title="Kategori berita"
-          description="Navigasi cepat berdasarkan topik konten utama."
+          eyebrow={getSetting(settings, "categories_eyebrow")}
+          title={getSetting(settings, "categories_title")}
+          description={getSetting(settings, "categories_description")}
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.categories.map((category) => (
@@ -74,9 +78,9 @@ export default async function HomePage() {
 
       <section className="container-shell py-6 sm:py-8">
         <SectionHeading
-          eyebrow="Pengumuman"
-          title="Informasi penting sekolah"
-          description="Panel pengumuman dinamis yang dapat dikelola admin dari dashboard."
+          eyebrow={getSetting(settings, "announcements_eyebrow")}
+          title={getSetting(settings, "announcements_title")}
+          description={getSetting(settings, "announcements_description")}
         />
         <div className="grid gap-4 lg:grid-cols-2">
           {data.announcements.map((item) => (
@@ -87,9 +91,9 @@ export default async function HomePage() {
 
       <section className="container-shell py-6 sm:py-8">
         <SectionHeading
-          eyebrow="Galeri"
-          title="Dokumentasi kegiatan"
-          description="Album foto sekolah dengan detail album dan grid foto responsif."
+          eyebrow={getSetting(settings, "gallery_eyebrow")}
+          title={getSetting(settings, "gallery_title")}
+          description={getSetting(settings, "gallery_description")}
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {data.galleries.map((gallery) => (
@@ -98,7 +102,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <CtaSection />
+      <CtaSection settings={settings} />
     </>
   );
 }

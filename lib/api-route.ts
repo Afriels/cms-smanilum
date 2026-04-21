@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
+import { getAdminSession } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabaseServer";
 import { generateSlug } from "@/lib/utils";
 
@@ -14,6 +15,9 @@ export async function createCollectionHandler({
   body: Record<string, unknown>;
   buildPayload?: PayloadBuilder;
 }) {
+  const unauthorized = await requireAdminAccess();
+  if (unauthorized) return unauthorized;
+
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json(
@@ -30,23 +34,43 @@ export async function createCollectionHandler({
   }
 
   const payload = buildPayload ? buildPayload(body) : body;
-  const { data, error } = await supabase.from(table).insert(payload).select("*").single();
+  const id = text(body.id);
+
+  const query = id
+    ? supabase.from(table).update(payload).eq("id", id).select("*").single()
+    : supabase.from(table).insert(payload).select("*").single();
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ message: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({ success: true, data }, { status: 201 });
+  return NextResponse.json({ success: true, data }, { status: id ? 200 : 201 });
 }
 
-export async function deleteCollectionItem(table: string, id: string | null) {
+export async function deleteCollectionItem(
+  table: string,
+  id: string | null,
+  options?: {
+    beforeDelete?: (
+      supabase: NonNullable<ReturnType<typeof createSupabaseAdminClient>>,
+    ) => Promise<void>;
+  },
+) {
   if (!id) {
     return NextResponse.json({ message: "ID wajib diisi." }, { status: 400 });
   }
 
+  const unauthorized = await requireAdminAccess();
+  if (unauthorized) return unauthorized;
+
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json({ success: true, fallback: true });
+  }
+
+  if (options?.beforeDelete) {
+    await options.beforeDelete(supabase);
   }
 
   const { error } = await supabase.from(table).delete().eq("id", id);
@@ -67,4 +91,13 @@ export function text(value: unknown) {
 
 export function defaultSlugFromBody(body: Record<string, unknown>) {
   return generateSlug(text(body.slug) || text(body.title));
+}
+
+export async function requireAdminAccess() {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  return null;
 }

@@ -9,6 +9,7 @@ import type {
   Post,
   SiteSetting,
 } from "@/types";
+import { defaultSiteSettings } from "@/lib/settings";
 
 const categories: Category[] = [
   {
@@ -195,13 +196,26 @@ const announcements: Announcement[] = [
   },
 ];
 
-const siteSettings: SiteSetting[] = [
-  { id: "set-1", key: "site_name", value: "Smanilum News Portal" },
-  { id: "set-2", key: "site_tagline", value: "Portal informasi sekolah modern" },
-  { id: "set-3", key: "contact_email", value: "info@sekolahku.sch.id" },
-  { id: "set-4", key: "contact_phone", value: "(0341) 123456" },
-  { id: "set-5", key: "address", value: "Jl. Pendidikan No. 1, Jawa Timur" },
-];
+const siteSettings: SiteSetting[] = Object.entries(defaultSiteSettings).map(
+  ([key, value], index) => ({
+    id: `set-${index + 1}`,
+    key,
+    value,
+    group_name: key.startsWith("footer_")
+      ? "footer"
+      : key.startsWith("cta_") ||
+          key.startsWith("hero_") ||
+          key.startsWith("carousel_") ||
+          key.startsWith("featured_") ||
+          key.startsWith("latest_") ||
+          key.startsWith("announcements_") ||
+          key.startsWith("gallery_") ||
+          key.startsWith("categories_") ||
+          key.startsWith("trending_")
+        ? "homepage"
+        : "site",
+  }),
+);
 
 export const mockData = {
   banner,

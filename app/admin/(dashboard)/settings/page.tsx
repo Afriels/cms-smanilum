@@ -1,20 +1,8 @@
-import { ResourceManager } from "@/components/admin/resource-manager";
+import { SettingsManager } from "@/components/admin/settings-manager";
 import { getAdminCollections } from "@/services/content-service";
 
 export default async function AdminSettingsPage() {
   const data = await getAdminCollections();
 
-  return (
-    <ResourceManager
-      title="Site Settings"
-      endpoint="/api/site-settings"
-      itemLabel="Setting"
-      items={data.settings as unknown as Record<string, unknown>[]}
-      fields={[
-        { name: "key", label: "Key" },
-        { name: "value", label: "Value", type: "textarea" },
-        { name: "group_name", label: "Group" },
-      ]}
-    />
-  );
+  return <SettingsManager settings={data.settings} />;
 }

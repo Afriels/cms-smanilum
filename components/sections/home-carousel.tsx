@@ -4,9 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getSetting, type SiteSettingsMap } from "@/lib/settings";
 import type { CarouselItem } from "@/types";
 
-export function HomeCarousel({ items }: { items: CarouselItem[] }) {
+export function HomeCarousel({
+  items,
+  settings,
+}: {
+  items: CarouselItem[];
+  settings: SiteSettingsMap;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -37,7 +44,7 @@ export function HomeCarousel({ items }: { items: CarouselItem[] }) {
           <div className="relative z-10 grid h-full content-end gap-6 p-5 sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-8 lg:p-10">
             <div className="max-w-2xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-blue-200 sm:mb-4 sm:text-sm">
-                Highlight Utama
+                {getSetting(settings, "carousel_badge")}
               </p>
               <h2 className="break-words text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
                 {active.title}
@@ -49,7 +56,7 @@ export function HomeCarousel({ items }: { items: CarouselItem[] }) {
                 href={active.href || "/berita"}
                 className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-blue-700 sm:mt-6 sm:w-auto"
               >
-                Buka cerita lengkap
+                {getSetting(settings, "carousel_cta_label")}
               </Link>
             </div>
 

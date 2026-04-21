@@ -1,3 +1,5 @@
+import type { SiteSettingsMap } from "@/lib/settings";
+
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
 export interface Category {
@@ -115,7 +117,7 @@ export interface HomePageData {
   categories: Category[];
   announcements: Announcement[];
   galleries: Gallery[];
-  siteSettings: Record<string, string>;
+  siteSettings: SiteSettingsMap;
 }
 
 export interface PaginatedResult<T> {

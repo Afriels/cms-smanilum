@@ -1,19 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/admin/image-upload-field";
 
 export default function AdminMediaPage() {
   const [message, setMessage] = useState("");
-  const [preview, setPreview] = useState("");
+  const [bucket, setBucket] = useState("posts");
+  const [folder, setFolder] = useState("uploads");
+  const [file, setFile] = useState<File | null>(null);
 
-  async function handleUpload(formData: FormData) {
+  async function handleUpload() {
     setMessage("");
-    const file = formData.get("file");
-    if (!(file instanceof File)) return;
-    setPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.set("file", file);
+    formData.set("bucket", bucket);
+    formData.set("folder", folder);
 
     const response = await fetch("/api/upload", {
       method: "POST",
@@ -26,10 +32,10 @@ export default function AdminMediaPage() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-      <form action={handleUpload} className="surface-card space-y-4 p-5 sm:p-6">
+      <div className="surface-card space-y-4 p-5 sm:p-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">Bucket</label>
-          <Select name="bucket" defaultValue="posts">
+          <Select value={bucket} onChange={(event) => setBucket(event.target.value)}>
             <option value="posts">posts</option>
             <option value="banners">banners</option>
             <option value="galleries">galleries</option>
@@ -39,33 +45,26 @@ export default function AdminMediaPage() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">Folder</label>
-          <Input name="folder" defaultValue="uploads" />
+          <Input value={folder} onChange={(event) => setFolder(event.target.value)} />
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700">Pilih file</label>
-          <Input name="file" type="file" accept="image/*" />
-        </div>
+        <ImageUploadField
+          label="Pilih file"
+          value=""
+          accept="image/*,.ico"
+          onFileChange={(nextFile) => setFile(nextFile)}
+        />
         {message ? <p className="text-sm text-slate-600">{message}</p> : null}
-        <Button type="submit" className="w-full">
+        <Button type="button" className="w-full" onClick={handleUpload}>
           Upload ke Storage
         </Button>
-      </form>
+      </div>
 
       <div className="surface-card p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-slate-900">Preview</h2>
         <div className="mt-4 flex min-h-64 items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:min-h-80">
-          {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={preview}
-              alt="Preview upload"
-              className="max-h-72 w-full max-w-xl rounded-2xl object-cover"
-            />
-          ) : (
-            <p className="max-w-sm text-center text-sm leading-7 text-slate-500">
-              Preview gambar akan muncul di sini sebelum atau sesudah upload.
-            </p>
-          )}
+          <p className="max-w-sm text-center text-sm leading-7 text-slate-500">
+            Gunakan uploader di panel kiri untuk melihat preview, validasi file, dan mengunggah media ke bucket yang dipilih.
+          </p>
         </div>
       </div>
     </div>

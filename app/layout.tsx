@@ -1,14 +1,30 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { createMetadata } from "@/lib/site";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
+import { getSiteSettingsMap } from "@/services/content-service";
 
-export const metadata: Metadata = createMetadata({
-  title: "Smanilum News Portal",
-  description:
-    "Portal berita sekolah modern dengan tampilan profesional, cepat, dan siap dikelola melalui CMS internal.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettingsMap();
+  const metadata = createMetadata({
+    title: settings.site_name,
+    description: settings.site_description,
+    settings,
+  });
+
+  const favicon = settings.site_favicon_url;
+  const logo = settings.site_logo_url || favicon || undefined;
+
+  return {
+    ...metadata,
+    icons: favicon
+      ? {
+          icon: [{ url: favicon }],
+          shortcut: [{ url: favicon }],
+          apple: logo ? [{ url: logo }] : undefined,
+        }
+      : metadata.icons,
+  };
+}
 
 export default function RootLayout({
   children,
@@ -17,13 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className="antialiased">
-      <body className="min-h-screen">
-        <div className="relative flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
-      </body>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }

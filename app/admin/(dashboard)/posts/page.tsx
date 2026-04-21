@@ -22,7 +22,14 @@ export default async function AdminPostsPage() {
             value: category.id,
           })),
         },
-        { name: "thumbnail_url", label: "Thumbnail URL", type: "url" },
+        {
+          name: "thumbnail_url",
+          label: "Feature image",
+          type: "image",
+          bucket: "posts",
+          folder: "feature-images",
+          helperText: "Gambar utama post akan diunggah ke bucket `posts`.",
+        },
         { name: "is_featured", label: "Featured Post", type: "checkbox" },
         { name: "is_published", label: "Publish", type: "checkbox" },
       ]}

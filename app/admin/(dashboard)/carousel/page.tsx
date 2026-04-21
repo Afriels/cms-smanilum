@@ -13,9 +13,15 @@ export default async function AdminCarouselPage() {
       fields={[
         { name: "title", label: "Judul slide" },
         { name: "subtitle", label: "Deskripsi", type: "textarea" },
-        { name: "image_url", label: "Image URL", type: "url" },
+        {
+          name: "image_url",
+          label: "Gambar slide",
+          type: "image",
+          bucket: "banners",
+          folder: "carousel",
+        },
         { name: "href", label: "Link tujuan", type: "url" },
-        { name: "order_number", label: "Urutan" },
+        { name: "order_number", label: "Urutan", type: "number" },
         { name: "is_active", label: "Aktif", type: "checkbox" },
       ]}
     />

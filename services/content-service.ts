@@ -1,4 +1,9 @@
 import { mockData } from "@/lib/mock-data";
+import {
+  getNumberSetting,
+  mergeSiteSettings,
+  type SiteSettingsMap,
+} from "@/lib/settings";
 import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabaseServer";
 import { generateSlug } from "@/lib/utils";
 import type {
@@ -23,10 +28,38 @@ function sortByPublishedDesc<T extends { published_at?: string | null }>(items: 
 }
 
 function toSettingMap() {
-  return mockData.siteSettings.reduce<Record<string, string>>((acc, item) => {
-    acc[item.key] = item.value;
-    return acc;
-  }, {});
+  return mergeSiteSettings(
+    mockData.siteSettings.reduce<Record<string, string>>((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {}),
+  );
+}
+
+function normalizeSettingRows(
+  rows: { key: string; value: string }[] | null | undefined,
+): SiteSettingsMap {
+  return mergeSiteSettings(
+    (rows || []).reduce<Record<string, string>>((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {}),
+  );
+}
+
+export async function getSiteSettingsMap(): Promise<SiteSettingsMap> {
+  const supabase = await createSupabaseServerClient();
+
+  if (supabase) {
+    try {
+      const { data } = await supabase.from("site_settings").select("key, value");
+      return normalizeSettingRows(data || []);
+    } catch {
+      // ignore
+    }
+  }
+
+  return toSettingMap();
 }
 
 export async function getHomePageData(): Promise<HomePageData> {
@@ -58,22 +91,32 @@ export async function getHomePageData(): Promise<HomePageData> {
         supabase.from("site_settings").select("*"),
       ]);
 
-    const settings = (settingsRes.data || []).reduce<Record<string, string>>((acc, item) => {
-      acc[item.key] = item.value;
-      return acc;
-    }, {});
+    const settings = normalizeSettingRows(settingsRes.data || []);
 
     const posts = (postsRes.data as Post[]) || [];
+    const featuredLimit = getNumberSetting(settings, "featured_limit", 4);
+    const latestLimit = getNumberSetting(settings, "latest_limit", 8);
+    const announcementsLimit = getNumberSetting(
+      settings,
+      "announcements_limit",
+      4,
+    );
+    const galleryLimit = getNumberSetting(settings, "gallery_limit", 4);
 
     return {
       banner: (bannerRes.data as Banner | null) || null,
       carousel: (carouselRes.data as CarouselItem[]) || [],
-      featuredPosts: posts.filter((post) => post.is_featured).slice(0, 4),
-      latestPosts: posts.slice(0, 8),
+      featuredPosts: posts
+        .filter((post) => post.is_featured)
+        .slice(0, featuredLimit),
+      latestPosts: posts.slice(0, latestLimit),
       trendingPosts: posts.slice(0, 5),
       categories: (categoriesRes.data as Category[]) || [],
-      announcements: (announcementsRes.data as Announcement[]) || [],
-      galleries: (galleriesRes.data as Gallery[]) || [],
+      announcements: ((announcementsRes.data as Announcement[]) || []).slice(
+        0,
+        announcementsLimit,
+      ),
+      galleries: ((galleriesRes.data as Gallery[]) || []).slice(0, galleryLimit),
       siteSettings: settings,
     };
   } catch {

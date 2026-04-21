@@ -1,14 +1,23 @@
 import Link from "next/link";
 import { Flame } from "lucide-react";
+import { getSetting, type SiteSettingsMap } from "@/lib/settings";
 import { formatDate } from "@/lib/utils";
 import type { Post } from "@/types";
 
-export function TrendingSidebar({ posts }: { posts: Post[] }) {
+export function TrendingSidebar({
+  posts,
+  settings,
+}: {
+  posts: Post[];
+  settings: SiteSettingsMap;
+}) {
   return (
     <aside className="surface-card h-fit p-5 sm:p-6">
       <div className="mb-5 flex items-center gap-2 text-blue-700">
         <Flame className="h-5 w-5" />
-        <h3 className="text-lg font-semibold text-slate-900">Trending Posts</h3>
+        <h3 className="text-lg font-semibold text-slate-900">
+          {getSetting(settings, "trending_title")}
+        </h3>
       </div>
       <div className="space-y-5">
         {posts.map((post, index) => (

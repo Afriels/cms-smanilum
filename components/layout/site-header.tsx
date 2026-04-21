@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, Search, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { getSetting, type SiteSettingsMap } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -15,9 +17,12 @@ const navItems = [
   { href: "/kontak", label: "Kontak" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ settings }: { settings: SiteSettingsMap }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const siteName = getSetting(settings, "site_name");
+  const siteTagline = getSetting(settings, "site_tagline");
+  const siteLogoUrl = settings.site_logo_url;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -34,14 +39,26 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-white/70 bg-white/85 backdrop-blur-xl">
       <div className="container-shell flex min-h-18 items-center gap-3 py-3">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-sky-400 text-base font-bold text-white sm:h-11 sm:w-11 sm:text-lg">
-            S
-          </div>
+          {siteLogoUrl ? (
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white sm:h-11 sm:w-11">
+              <Image
+                src={siteLogoUrl}
+                alt={siteName}
+                fill
+                sizes="44px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-sky-400 text-base font-bold text-white sm:h-11 sm:w-11 sm:text-lg">
+              {siteName.charAt(0)}
+            </div>
+          )}
           <div className="min-w-0">
             <p className="truncate text-xs font-semibold tracking-[0.16em] text-blue-700 sm:text-sm sm:tracking-[0.22em]">
-              SMANILUM
+              {siteName}
             </p>
-            <p className="truncate text-xs text-slate-500 sm:text-sm">News Portal</p>
+            <p className="truncate text-xs text-slate-500 sm:text-sm">{siteTagline}</p>
           </div>
         </Link>
 

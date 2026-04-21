@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminCollections } from "@/services/content-service";
 import { createCollectionHandler, deleteCollectionItem, normalizeCheckbox, text } from "@/lib/api-route";
+import { deleteFromSupabaseStorage } from "@/services/upload-service";
 
 export async function GET() {
   const data = await getAdminCollections();
@@ -25,5 +26,21 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
-  return deleteCollectionItem("banners", searchParams.get("id"));
+  const id = searchParams.get("id");
+
+  return deleteCollectionItem("banners", id, {
+    beforeDelete: async (supabase) => {
+      if (!id) return;
+      const { data } = await supabase
+        .from("banners")
+        .select("image_url")
+        .eq("id", id)
+        .maybeSingle();
+
+      await deleteFromSupabaseStorage({
+        bucket: "banners",
+        publicUrl: data?.image_url,
+      });
+    },
+  });
 }

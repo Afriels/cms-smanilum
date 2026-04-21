@@ -13,7 +13,13 @@ export default async function AdminGalleryPage() {
       fields={[
         { name: "title", label: "Judul album" },
         { name: "description", label: "Deskripsi", type: "textarea" },
-        { name: "cover_image_url", label: "Cover URL", type: "url" },
+        {
+          name: "cover_image_url",
+          label: "Cover galeri",
+          type: "image",
+          bucket: "galleries",
+          folder: "covers",
+        },
         { name: "published_at", label: "Tanggal publish", type: "datetime-local" },
       ]}
     />

@@ -12,6 +12,7 @@ export default async function AdminPagesPage() {
       items={data.pages as unknown as Record<string, unknown>[]}
       fields={[
         { name: "title", label: "Judul halaman" },
+        { name: "slug", label: "Slug halaman" },
         { name: "excerpt", label: "Excerpt", type: "textarea" },
         { name: "content", label: "Konten", type: "textarea" },
         { name: "is_published", label: "Publish", type: "checkbox" },

@@ -13,7 +13,13 @@ export default async function AdminBannersPage() {
       fields={[
         { name: "title", label: "Judul banner" },
         { name: "subtitle", label: "Subjudul", type: "textarea" },
-        { name: "image_url", label: "Image URL", type: "url" },
+        {
+          name: "image_url",
+          label: "Gambar banner",
+          type: "image",
+          bucket: "banners",
+          folder: "homepage",
+        },
         { name: "cta_label", label: "Label CTA" },
         { name: "cta_href", label: "Link CTA", type: "url" },
         { name: "is_active", label: "Aktif", type: "checkbox" },
